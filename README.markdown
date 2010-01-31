@@ -1,7 +1,7 @@
 #ThunderBolt AS3 Console
 
 ##What the hell is ThunderBolt AS3 Console?
-ThunderBolt AS3 Console is a logging tool  based on [Adobe AIR](http://www.adobe.com/products/air/) for using [ThunderBolt AS3](http://code.google.com/p/flash-thunderbolt/wiki/ThunderBoltAS3) without the need of [Firefox](http://www.getfirebug.com/) and [Firebug](http://www.mozilla.com/en-US/firefox/). 
+ThunderBolt AS3 Console is a logging tool based on [Adobe AIR](http://www.adobe.com/products/air/) for using [ThunderBolt AS3](http://code.google.com/p/flash-thunderbolt/wiki/ThunderBoltAS3) to debug ActionScript 3 projects (Flash, Flex or AIR), but without the need of [Firefox](http://www.getfirebug.com/) and [Firebug](http://www.mozilla.com/en-US/firefox/). 
 
 For more information check out [its wiki page "ThunderBoltAS3Console"](http://code.google.com/p/flash-thunderbolt/wiki/ThunderBoltAS3Console) at ThunderBolt's project on Google Code.
 
