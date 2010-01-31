@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<mx:HBox
+	xmlns:mx="http://www.adobe.com/2006/mxml"	
+	width="100%" height="50" 
+	verticalAlign="middle"
+	paddingLeft="20" paddingRight="20"
+	styleName="footer"
+	>
+	
+	<mx:Script>
+		<![CDATA[
+			import org.osflash.thunderbolt.console.events.ViewEvent;
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+						
+			[Bindable] private var _appModel: AppModel = AppModel.getInstance();
+			
+			private function clickButtonHandler(event: MouseEvent):void
+			{
+				var newViewState: int = (_appModel.viewState == AppModel.VIEW_ADD_FILE)
+										? AppModel.VIEW_CONSOLE
+										: AppModel.VIEW_ADD_FILE;
+										
+				var viewEvent: ViewEvent = new ViewEvent( ViewEvent.CHANGE_VIEW_STATE );				
+				viewEvent.newViewState = newViewState;
+				this.dispatchEvent(viewEvent);					
+			}			
+				
+		]]>
+	</mx:Script>
+	
+	<mx:Button 
+		width="85" height="20"
+		label="{	(_appModel.viewState == AppModel.VIEW_ADD_FILE) 
+					? resourceManager.getString('Resources', 'save').toUpperCase() 
+					: resourceManager.getString('Resources', 'change').toUpperCase()  }" 
+		visible="{_appModel.logPath != null}"
+		styleName="footerButton"
+		click="clickButtonHandler(event)"
+		 />
+		 
+	<mx:Label id="path"
+		text="{_appModel.logPath}"
+		width="100%" 
+		paddingLeft="20"
+		color="0xFFFFFF"
+		/>
+		 
+</mx:HBox>

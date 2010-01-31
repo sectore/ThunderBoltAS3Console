@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:view="org.osflash.thunderbolt.console.mvc.view.*"
+	xmlns:comp="org.osflash.thunderbolt.console.mvc.view.components.*"
+	width="100%" height="100%"
+	verticalScrollPolicy="off"
+	>
+
+	<mx:Script>
+		<![CDATA[
+			import gs.TweenLite;
+			import mx.effects.easing.Circular;
+			import skins.AssetLib;
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+			import mx.core.Container;
+			
+		
+			[Bindable] private var _model: AppModel = AppModel.getInstance();		
+			
+			private function getView( workflowState : Number ) : Container
+	 		{
+				switch (_model.viewState)
+				{
+					case AppModel.VIEW_ADD_FILE:
+						return configFile;
+					case AppModel.VIEW_CONSOLE:
+						return console;
+					default:
+						return console;
+						
+				}
+			}
+
+		]]>
+	</mx:Script>
+
+	<comp:Header id="header" />
+
+	<mx:ViewStack id="mainViewStack" 
+		height="100%" width="100%"
+   		selectedChild="{ getView( _model.viewState ) }">
+		
+		<view:ConfigFileView id="configFile"
+			width="100%" height="100%" />
+			
+		<view:ConsoleView id="console"
+			width="100%" height="100%" />
+		
+	</mx:ViewStack>
+
+	<comp:Footer id="footer" />
+</mx:VBox>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?> 
+  <update xmlns="http://ns.adobe.com/air/framework/update/description/1.0"> 
+    <version>2.2.2</version> 
+    <!--
+    <url>http://localhost/thunderbolt/ThunderBoltAS3Console_v2.2.1.air</url> 
+   	--> 
+    <url>http://flash-thunderbolt.googlecode.com/files/ThunderBoltAS3Console_v.2.2.2.air</url>
+    <description><![CDATA[ *** Version	2.2.2 ( 01/17/10 ) *** Updated to AIR 1.5.3 *** Updated certificate by Thawte for 2010 added *** Have fun! *** ]]></description> 
+</update>

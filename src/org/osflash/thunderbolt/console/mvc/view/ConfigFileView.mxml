@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<mx:Box 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	verticalAlign="middle" horizontalAlign="center"
+	backgroundColor="0xFFFFFF"
+	addedToStage="addedToStageHandler(event)"
+	removedFromStage="removeFromStageHandler(event)"	
+	creationComplete="creationCompleteHandler(event)"
+	>
+	<mx:Script>
+		<![CDATA[
+			import org.osflash.thunderbolt.console.events.ConfigEvent;
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+			import skins.AssetLib;
+			
+			[Bindable] private var _appModel: AppModel = AppModel.getInstance();	
+			
+			/**
+			* Callback handler when this component is created complete
+			* @param event	Event	
+			* 
+			*/			
+			private function creationCompleteHandler(event: Event):void
+			{
+ 				this.addEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, dragInHandler);		
+				this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler); 
+			}				
+
+			/**
+			* Callback handler when this component is added to stage
+			* @param event	Event	
+			* 
+			*/			
+			private function addedToStageHandler(event: Event):void
+			{
+/* 				//
+				// we have to wait until the component is added to stage using a viewstack to add EventListener
+				this.addEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, dragInHandler);		
+				this.addEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler); */
+			}	
+
+			/**
+			* Callback handler when this component is removed from stage
+			* @param event	Event	
+			* 
+			*/		
+			private function removeFromStageHandler(event: Event):void
+			{
+/* 				//
+				// we have to wait until the component is added to stage using a viewstack
+				this.removeEventListener(NativeDragEvent.NATIVE_DRAG_ENTER, dragInHandler);		
+				this.removeEventListener(NativeDragEvent.NATIVE_DRAG_DROP, dragDropHandler); */
+			}	
+
+			/**
+			* Callback handler when the files are dragged in
+			* @param event	NativeDragEvent	
+			* 
+			*/				
+			private function dragInHandler(event: NativeDragEvent):void
+			{
+				var dropable: Boolean = false;
+				
+				var files: Array = event.clipboard.getData(ClipboardFormats.FILE_LIST_FORMAT) as Array;
+
+				// accept only one file which based on "txt" extension
+				if ( files.length == 1 
+					&& files[0].extension.toLowerCase() == "txt")
+				{
+						NativeDragManager.acceptDragDrop(this);		
+				}
+
+				
+			}			
+
+			/**
+			* Callback handler when the files are dropped
+			* @param event	NativeDragEvent	
+			* 
+			*/		
+			private function dragDropHandler(event: NativeDragEvent):void
+			{
+				var files: Array = event.clipboard.getData( ClipboardFormats.FILE_LIST_FORMAT ) as Array;
+				
+				var configEvent: ConfigEvent = new ConfigEvent( ConfigEvent.LOG_PATH_CHANGED );				
+				configEvent.logPath = File(files[0]).nativePath;
+				this.dispatchEvent(configEvent);					
+						
+			}	
+									
+		]]>
+	</mx:Script>
+	
+		<mx:Image source="{AssetLib.dragHere}" 
+			/>
+		
+</mx:Box>

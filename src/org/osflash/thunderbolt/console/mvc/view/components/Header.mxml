@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	styleName="header"
+	initialize="initializeHandler( event )"
+	width="100%"
+	height="{SHOW_OPTIONS_HEIGHT}"
+	verticalScrollPolicy="off"
+	paddingRight="20" paddingLeft="20"
+	>
+	<mx:Script>
+		<![CDATA[
+			import mx.core.ScrollPolicy;
+			import org.osflash.thunderbolt.console.events.ConsoleEvent;
+			import org.osflash.thunderbolt.console.events.ViewEvent;
+			import org.osflash.thunderbolt.Logger;
+			import mx.events.FlexEvent;
+			import mx.effects.easing.Circular;
+			import gs.TweenLite;
+			import skins.AssetLib;
+			
+			//
+			// vars
+	
+			//
+			// const	
+			public static const SHOW_OPTIONS: String = "showPreferences";
+			public static const SHOW_OPTIONS_HEIGHT: int = 190;
+			public static const HIDE_OPTIONS: String = "hidePreferences";			
+			public static const HIDE_OPTIONS_HEIGHT: int = 84;	
+			
+			public static const EASE_FUNC: Function = Circular.easeOut;	
+			public static const TWEEN_TIME: Number = .6;	
+					
+			//
+			// instances
+			
+
+			private function initializeHandler(event: FlexEvent):void
+			{
+				currentState = HIDE_OPTIONS;
+			}									
+
+			//--------------------------------------------------------------------------
+			//
+			// states
+			//
+			//--------------------------------------------------------------------------
+	        override public function set currentState( newState: String ):void 
+	        {
+	        	super.currentState = newState;
+					
+				if ( currentState == SHOW_OPTIONS)
+				{
+					showOptions();
+				}
+				else
+				{
+					hideOptions();
+				}
+				
+				//Logger.info("currentState " + currentState );
+        	
+	        }
+
+			private function showOptions():void
+			{		
+				//
+				// creating preferences only if needed, because prefContainer.creationPolicy == "none"
+				if ( !options.processedDescriptors )
+				{
+					options.createComponentsFromDescriptors( true );
+				}
+											
+   				TweenLite.to(	this, 
+								TWEEN_TIME, 
+								{
+									height: SHOW_OPTIONS_HEIGHT,
+									ease: EASE_FUNC
+								});				
+			}
+			
+			private function hideOptions():void
+			{									
+   					TweenLite.to(	this, 
+									TWEEN_TIME, 
+									{
+										height: HIDE_OPTIONS_HEIGHT,
+										ease: EASE_FUNC
+									});							
+			}
+
+			
+		]]>
+	</mx:Script>
+
+	<mx:states>
+		<mx:State id="showPref"
+			name="{ SHOW_OPTIONS }" />
+		<mx:State id="hidePref"
+			name="{ HIDE_OPTIONS }" />
+	</mx:states>
+	
+	<mx:Canvas
+		width="100%" height="{HIDE_OPTIONS_HEIGHT}"
+		>
+
+		<mx:Image source="{AssetLib.logo}"
+				top="20"
+				click="{ navigateToURL( new URLRequest('http://www.websector.de/blog/category/thunderbolt/') ); }"
+				buttonMode="true" />
+				
+		<mx:Button id="prefButton"
+				right="0" top="35"
+				width="100" height="20"
+				icon="{ !prefButton.selected ? AssetLib.icon_openOptions : AssetLib.icon_closeOptions }"
+				label="{ resourceManager.getString('Resources', 'options').toUpperCase() }" 
+				toggle="true"
+				styleName="standardButton"
+				click="currentState = ( currentState == SHOW_OPTIONS ) ? HIDE_OPTIONS : SHOW_OPTIONS"
+				/>	
+			
+	</mx:Canvas>
+	
+			
+	<comp:Options id="options"
+		xmlns:comp="org.osflash.thunderbolt.console.mvc.view.components.*"
+		backgroundColor="0x333333"
+		width="100%" height="{ SHOW_OPTIONS_HEIGHT - HIDE_OPTIONS_HEIGHT - bottom.height }"
+		paddingLeft="20" paddingRight="20" paddingTop="10"
+		creationPolicy="none"
+		/>
+	
+	
+	<mx:Spacer id="bottom"
+		height="20" />
+				
+</mx:VBox>

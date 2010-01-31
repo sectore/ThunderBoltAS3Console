@@ -1,0 +1,183 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<GraphicBorderSkin 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	xmlns="http://www.degrafa.com/2007"  
+    xmlns:geom="flash.geom.*"
+    >
+   
+	<mx:Metadata>
+		[Style(name="bgGradientColors", type="Array", format="Number", inherit="no")]
+		[Style(name="bgGradientOverColors", type="Array", format="Number", inherit="no")]
+		[Style(name="borderWeigth", type="Number", format="Number", inherit="no")]
+		[Style(name="borderColor", type="Number", format="Number", inherit="no")]
+		[Style(name="borderOverColor", type="Number", format="Number", inherit="no")]		
+	</mx:Metadata> 
+   
+    <mx:Script>
+        <![CDATA[
+        	import mx.graphics.Stroke;
+        	import mx.collections.ArrayCollection;
+            
+			protected var _bgGradientColors: Array = [0, 0xFFFFFF];
+			protected var _bgGradientColorsChanged: Boolean = true;
+
+			[Bindable] protected var _bgGradientOverColors: Array = [0, 0];
+			protected var _bgGradientOverColorsChanged: Boolean = true;
+
+			[Bindable] protected var _borderColor: int = 0;
+			protected var _borderColorChanged: Boolean = true;
+
+			[Bindable] protected var _borderOverColor: int = 0x666666;
+			protected var _borderOverColorChanged: Boolean = true;
+
+			[Bindable] protected var _borderWeight: int = 1;
+			protected var _borderWeightChanged: Boolean = true;
+						 
+            [Bindable] protected var _width: Number = 0;            
+            [Bindable] protected var _height: Number = 0;
+            
+
+		    override public function styleChanged(styleProp: String):void 
+		    {
+		    	super.styleChanged(styleProp); 	
+		    	
+		    	switch (styleProp)
+		    	{
+		    		case "bgGradientColors":
+		    			_bgGradientColorsChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "bgGradientOverColors":
+		    			_bgGradientOverColorsChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "borderColor":
+		    			_borderColorChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "borderOverColor":
+		    			_borderOverColorChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "borderWeigth":
+		    			_borderWeightChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		default:	    	
+		    	}	      	
+		    } 
+	                
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+            {
+                
+                super.updateDisplayList(unscaledWidth, unscaledHeight);
+                _width = unscaledWidth;
+                _height = unscaledHeight;
+ 
+	 			if (_bgGradientColorsChanged) 
+				{
+					_bgGradientColors = getStyle("bgGradientColors");
+					_bgGradientColorsChanged = false;
+				}
+
+	 			if (_bgGradientOverColorsChanged) 
+				{
+					_bgGradientOverColors= getStyle("bgGradientOverColors");													
+					_bgGradientOverColorsChanged = false;
+				}
+
+	 			if (_borderColorChanged) 
+				{
+					_borderColor = getStyle("borderColor");																		
+					_borderColorChanged = false;
+				}
+
+
+	 			if (_borderOverColorChanged) 
+				{
+					_borderOverColor = getStyle("borderOverColor");																		
+					_borderOverColorChanged = false;
+				}
+				
+	 			if (_borderWeightChanged) 
+				{
+					_borderWeight = getStyle("borderWeigth");														
+					_borderWeightChanged = false;
+				}				                
+            }
+            
+			private function getTopGradientColor():int
+			{
+				var color: int =  (name == 'overSkin' || name == 'selectedSkin' || name == 'selectedOverSkin') 
+								? _bgGradientOverColors[0]              			
+                				: _bgGradientColors[0];	
+                				
+                return color;		
+			}            
+ 
+			private function getBottomGradientColor():int
+			{
+				var color: int =  (name == 'overSkin' || name == 'selectedSkin' || name == 'selectedOverSkin') 
+								? _bgGradientOverColors[1]              			
+                				: _bgGradientColors[1];	
+                				
+                return color;		
+			} 
+
+			private function getBorderColor():int
+			{
+				var color: int =  (name == 'overSkin' || name == 'selectedSkin' || name == 'selectedOverSkin') 
+								? _borderOverColor             			
+                				: _borderColor
+                				
+                return color;		
+			} 
+						            
+        ]]>
+    </mx:Script>
+
+    <strokes>
+        <SolidStroke id="stroke0"
+                     alpha="1"
+                     color="{getBorderColor()}"
+                     weight="{_borderWeight}"
+                     caps="square"
+                     pixelHinting="true"
+                     scaleMode="normal"
+                     />
+    </strokes>
+            
+    <fills>
+		<LinearGradientFill id="fill0"
+					angle="90"
+					>
+                <GradientStop id="gradient0"
+                	color="{ getTopGradientColor() }"
+                	alpha="1" 
+                	/>
+                <GradientStop id="gradient1"
+                	color="{ getBottomGradientColor() }"
+                	alpha="1" 
+                	/>
+        </LinearGradientFill>
+    </fills>       
+    
+    <geometry>   	
+    	<RegularRectangle 
+    		y="-1"
+    		height="{_height}" width="{_width}" 
+    		fill="{fill0}"
+    		stroke="{stroke0}" />
+    </geometry>
+      
+</GraphicBorderSkin>

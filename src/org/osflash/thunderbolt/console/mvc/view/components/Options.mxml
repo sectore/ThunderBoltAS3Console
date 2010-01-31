@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:VBox 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	creationComplete="creationCompleteHandler( event )"
+	>
+
+	<mx:Script>
+		<![CDATA[
+			import mx.events.FlexEvent;
+
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+			import org.osflash.thunderbolt.console.events.ViewEvent;
+			import org.osflash.thunderbolt.console.events.ConsoleEvent;
+			
+			
+			//
+			// instancese
+			[Bindable] private var _appModel: AppModel = AppModel.getInstance();
+			
+			//--------------------------------------------------------------------------
+			//
+			// callbacks
+			//
+			//--------------------------------------------------------------------------
+			
+			private function bUpdatedClickedHandler( event: MouseEvent ):void
+			{
+				
+				//
+				// an update screen have to be on top, not the console itself
+				if ( _appModel.alwaysInFront )
+					_appModel.alwaysInFront = false;
+					
+				this.dispatchEvent( new ViewEvent( ViewEvent.CHECK_FOR_UPDATE ) );
+			}			
+
+			private function creationCompleteHandler(event: FlexEvent):void
+			{	
+				// Reading the application descriptor file
+				// @see: http://help.adobe.com/en_US/AIR/1.5/devappsflex/WS5b3ccc516d4fbf351e63e3d118676a5e5e-7fff.html		
+				var appXml:XML = NativeApplication.nativeApplication.applicationDescriptor; 
+				var ns:Namespace = appXml.namespace();
+				var appVersion: String = appXml.ns::version[0]; 			
+				txtVersion.text = resourceManager.getString('Resources', 'opt_version', [ appVersion ] );
+			}
+			
+		]]>
+	</mx:Script>
+	<mx:HBox
+		paddingTop="10" paddingBottom="10"
+		horizontalGap="30"
+		>
+		
+		<mx:CheckBox id="cbTrace"
+			label="{resourceManager.getString('Resources', 'opt_hideTrace')}" 
+			selected="{ _appModel.hideTraceLogs }"
+			change="_appModel.hideTraceLogs = cbTrace.selected"
+			/>
+			
+		<mx:CheckBox id="cbFront"
+			label="Console always in front"
+			selected="{ _appModel.alwaysInFront }"
+			change="_appModel.alwaysInFront = cbFront.selected"
+			/>
+			
+		<mx:Button id="bUpdated"
+				right="0" top="35"
+				width="120" height="20"
+				label="{resourceManager.getString('Resources', 'opt_checkUpdates')}" 
+				styleName="standardButton"
+				click="bUpdatedClickedHandler( event )"
+				/>	
+		
+		<mx:Text id="txtVersion"
+			styleName="txtVersion"
+			/>
+						
+	</mx:HBox>
+	
+	<mx:LinkButton
+		styleName="prefLinkButton"
+		label="{resourceManager.getString('Resources', 'opt_author')}" 
+		click="{ navigateToURL( new URLRequest( resourceManager.getString('Resources', 'opt_author_url') ) ); }"
+		 />
+			 
+</mx:VBox>

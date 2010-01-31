@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<mx:TabNavigator 
+	xmlns:mx="http://www.adobe.com/2006/mxml"
+	>
+<mx:Script>
+	<![CDATA[
+		import mx.binding.utils.BindingUtils;
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+			import org.osflash.thunderbolt.console.events.ConsoleEvent;
+			import mx.controls.CheckBox;
+			import mx.events.FlexEvent;
+			import mx.controls.Button;
+	
+			private var _styleChanged: Boolean = true;
+
+    
+			//--------------------------------------------------------------------------
+			//
+			// lifecycle
+			//
+			//--------------------------------------------------------------------------
+			
+		    override public function styleChanged(styleProp: String):void 
+		    {
+		    	super.styleChanged(styleProp); 	
+		    	
+		    	switch (styleProp)
+		    	{
+		    		case "tabBgGradienOverColors":
+		    			_styleChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "textColors":
+		    			_styleChanged = true;
+		    			invalidateDisplayList();
+		    			break;
+		    		case "horizontalAlign":
+		    			// aligning tabBar has to be "left" at all time
+		    			this.setStyle( "horizontalAlign", "left" );
+		    			invalidateDisplayList();
+		    		default:	    	
+		    	}	      	
+		    } 
+			
+
+            override protected function updateDisplayList(unscaledWidth:Number, unscaledHeight:Number):void
+            {
+            	
+            	super.updateDisplayList(unscaledWidth, unscaledHeight);
+            	
+            	//
+            	// change styles if necessary
+            	if (_styleChanged)
+            	{
+					var tabBgGradienOverColors: Array;
+					var textColors: Array;
+					
+					tabBgGradienOverColors = this.getStyle("tabBgGradienOverColors") as Array;	
+					textColors = this.getStyle("textColors") as Array;			
+
+			        var tab:Button;
+			        
+			        var i:int = 0;
+			        var max: int = this.numChildren;	
+			        for (i; i < max; i++) 
+			        {
+						tab = Button( this.getTabAt(i) );
+						
+						var colorTop: int = tabBgGradienOverColors[i*2];
+						var colorBottom: int = tabBgGradienOverColors[(i*2 + 1)];
+						tab.setStyle("bgGradientOverColors", [colorTop, colorBottom]);
+						tab.setStyle("color", textColors[i]);
+						
+						var lastTab: Boolean = (i == max - 1);
+						tab.setStyle("lastTab", lastTab);      	            		            
+			        }    
+			        
+			        
+			        _styleChanged = false;       	
+            	
+            	}						
+		    
+            }			                       
+			    		
+	]]>
+</mx:Script>
+
+</mx:TabNavigator>

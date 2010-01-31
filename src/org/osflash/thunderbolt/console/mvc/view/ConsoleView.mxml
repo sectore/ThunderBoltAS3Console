@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<mx:Canvas 
+	xmlns:mx="http://www.adobe.com/2006/mxml" 
+	xmlns:component="org.osflash.thunderbolt.console.mvc.view.components.*"
+	creationComplete="creationCompleteHandler(event)">
+	
+
+	<mx:Script>
+		<![CDATA[
+			import mx.effects.Sequence;
+			import mx.effects.TweenEffect;
+			import mx.effects.AnimateProperty;
+			import mx.effects.easing.Cubic;
+			import mx.effects.Effect;
+			import mx.effects.Move;
+			import mx.effects.easing.Circular;
+			import gs.TweenLite;
+			import flash.utils.clearInterval;
+			import skins.AssetLib;
+			import mx.effects.Tween;
+			import mx.events.IndexChangedEvent;
+			import org.osflash.thunderbolt.console.events.ConsoleEvent;
+			import org.osflash.thunderbolt.console.mvc.model.AppModel;
+			import org.osflash.thunderbolt.Logger;
+			import mx.events.FlexEvent;
+
+
+			private var logLines: int = 0;
+
+			private var _logOutputReady: Boolean = false;
+			private var _debugOutputReady: Boolean = false;			
+			private var _infoOutputReady: Boolean = false;
+			private var _warnOutputReady: Boolean = false;			
+			private var _errorOutputReady: Boolean = false;				
+
+			[Bindable]	private var _appModel: AppModel = AppModel.getInstance();
+
+			/**
+			* Callback handler when the app is complete created
+			* @param event	FlexEvent	
+			* 
+			*/	
+			private function creationCompleteHandler(event: FlexEvent): void
+			{			
+
+			}			
+
+			/**
+			* Setter which is binded to models logData
+			* @param value	Array	
+			* 
+			*/	
+			private function set logData(value: Array):void
+			{
+				if (_logOutputReady) 
+				{
+					showLogData(_appModel.logData, logOutput.htmlLoader.window);
+				}			
+			}
+						
+			/**
+			* Setter which is binded to models logDebugData
+			* @param value	Array	
+			* 
+			*/	
+			private function set logDebugData(value: Array):void
+			{
+				if (_debugOutputReady) 
+				{
+					showLogData( value, debugOutput.htmlLoader.window);
+				}			
+			}			
+			/**
+			* Setter which is binded to models logInfoData
+			* @param value	Array	
+			* 
+			*/	
+			private function set logInfoData(value: Array):void
+			{
+				if (_infoOutputReady) 
+				{
+					showLogData(_appModel.logInfoData, infoOutput.htmlLoader.window);
+				}		
+			}
+			/**
+			* Setter which is binded to models logWarnData
+			* @param value	Array	
+			* 
+			*/	
+			private function set logWarnData(value: Array):void
+			{
+				if (_warnOutputReady) 
+				{
+					showLogData(_appModel.logWarnData, warnOutput.htmlLoader.window);
+				}	
+			}
+			/**
+			* Setter which is binded to models logErrorData
+			* @param value	Array	
+			* 
+			*/	
+			private function set logErrorData(value: Array):void
+			{
+				if (_errorOutputReady) 
+				{
+					showLogData(_appModel.logErrorData, errorOutput.htmlLoader.window);
+				}
+			}	
+
+			/**
+			* Show log data in a HTML component
+			* @param logData	Array		logoData	
+			* @param dom		Object		dom object of the HTML component	
+			 * 
+			*/													
+			private function showLogData (logData: Array, dom: Object): void
+			{
+			
+				var max: int = logData.length;
+				var i: int = 0;
+				for (i; i < max; i++)
+				{
+					var data: Object = logData[i];
+					
+					if ( data.action == "group" )
+					{
+						dom.addTree(dom.getLastNodeParent(), data.msg);
+						// adds the first tree under the group tree
+						dom.addTree(dom.lastNode, "Childs: ");		
+					}
+					else if ( data.action == "groupEnd" )
+					{
+						// sets the new parentNode to the parent of the latest node only
+						// without adding a tree
+						dom.setParentNode();							
+					}
+					else
+					{
+						dom.addTree(dom.getLastNodeParent(), data.msg);	
+					}
+				
+				}
+				// draw tree
+				dom.drawTree();
+
+			}			
+
+			/**
+			* Callback handler clicking the start button
+			* @param event	MouseEvent	
+			* 
+			*/					
+			private function clickStartButtonHandler(event: MouseEvent): void
+			{
+				var type:String = (_appModel.isWatching) ? ConsoleEvent.STOP_LOG_WATCHING : ConsoleEvent.START_LOG_WATCHING;
+				var viewEvent: ConsoleEvent = new ConsoleEvent(type);
+				this.dispatchEvent(viewEvent);
+			}	
+
+			/**
+			* Callback handler if a HTML component has been updated 
+			* @param event	Event	
+			* 
+			*/				
+			private function updateHTMLHandler(event: Event):void
+			{
+				var html: HTML = event.target as HTML;
+				
+				if (_appModel.isWatching)
+				{
+										
+   					TweenLite.to(	html, 
+									.25, 
+									{
+										verticalScrollPosition: html.maxVerticalScrollPosition,
+										ease: Circular.easeOut
+									});	   		
+					
+				}
+				// without tween				
+				// html.verticalScrollPosition = html.maxVerticalScrollPosition;
+				
+			}
+
+											
+		]]>
+	</mx:Script>		
+
+	<mx:Binding source="_appModel.logData" destination="logData" />	
+	<mx:Binding source="_appModel.logDebugData" destination="logDebugData" />	
+	<mx:Binding source="_appModel.logInfoData" destination="logInfoData" />
+	<mx:Binding source="_appModel.logWarnData" destination="logWarnData" />	
+	<mx:Binding source="_appModel.logErrorData" destination="logErrorData" />	
+			
+	<mx:HBox 
+		width="100%" 
+		top="15"
+		horizontalAlign="right"
+		horizontalGap="10"
+		paddingRight="20">
+		<mx:Button id="startButton"
+			width="100" height="20"
+			toggle="true"
+			label="{ (_appModel.isWatching) 
+						? resourceManager.getString('Resources', 'stop').toUpperCase()  
+						: resourceManager.getString('Resources', 'start').toUpperCase() }" 
+			styleName="standardButton"
+			click="clickStartButtonHandler(event);" 
+			/>
+		<mx:Button id="clearButton"
+			width="100" height="20"
+			label="{resourceManager.getString('Resources', 'clear').toUpperCase() }"
+			styleName="standardButton"
+			click="this.dispatchEvent( new ConsoleEvent(ConsoleEvent.CLEAR_LOG) );" 
+			/>
+		
+	</mx:HBox>
+			
+	<component:ConsoleTabNavigator id="tabNav" 
+		width="100%" height="100%"
+		top="15"
+		creationPolicy="all"
+		>
+		
+		<mx:Canvas 
+			width="100%"
+			label="ALL"
+			>
+			<mx:HTML id="logOutput"
+				height="100%" width="100%"
+				location="{_appModel.htmlPage}"
+				complete="_logOutputReady = true"
+				updateComplete="updateHTMLHandler(event)"
+				/>
+		</mx:Canvas>
+
+		<mx:Canvas 
+			label="DEBUG"
+			width="100%"
+			>
+			
+			<mx:HTML id="debugOutput"
+				height="100%" width="100%"
+				location="{_appModel.htmlPage}"
+				complete="_debugOutputReady = true"
+				updateComplete="updateHTMLHandler(event)"
+				/>
+			
+		</mx:Canvas>
+					
+		<mx:Canvas 
+			label="INFO"
+			width="100%">
+			
+			<mx:HTML id="infoOutput"
+				height="100%" width="100%"
+				location="{_appModel.htmlPage}"
+				complete="_infoOutputReady = true"
+				updateComplete="updateHTMLHandler(event)"
+				/>
+			
+		</mx:Canvas>
+		
+		<mx:Canvas 
+			label="WARN"
+			width="100%">
+			
+			<mx:HTML id="warnOutput"
+				height="100%" width="100%"
+				location="{_appModel.htmlPage}" 
+				complete="_warnOutputReady = true"
+				updateComplete="updateHTMLHandler(event)"
+				/>
+			
+		</mx:Canvas>
+
+		<mx:Canvas 
+			label="ERROR"
+			width="100%">
+			
+			
+			<mx:HTML id="errorOutput"
+				height="100%" width="100%"
+				location="{_appModel.htmlPage}" 
+				complete="_errorOutputReady = true"
+				updateComplete="updateHTMLHandler(event)"
+				/>
+			
+		</mx:Canvas>
+		
+	</component:ConsoleTabNavigator>
+			
+</mx:Canvas>	

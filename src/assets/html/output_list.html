@@ -1,0 +1,172 @@
+<!--
+* Logging Flex, AIR and Flash applications using ThunderBolt AS3 Console
+* 
+* @author	Jens Krause [www.websector.de]
+* @see		http://www.websector.de/blog/category/thunderbolt/
+* @see		http://code.google.com/p/flash-thunderbolt/
+* 
+* Source code based on the Mozilla Public License 1.1. Feel free to use it!
+*
+-->
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<title>Menu-Style TreeView</title>
+
+<link rel="stylesheet" type="text/css" href="assets/js/fonts/fonts-min.css" />
+<link rel="stylesheet" type="text/css" href="assets/js/treeview/assets/skins/sam/treeview.css" />
+<script type="text/javascript" src="assets/js/yahoo/yahoo-min.js"></script>
+<script type="text/javascript" src="assets/js/event/event-min.js"></script>
+<script type="text/javascript" src="assets/js/treeview/treeview-min.js"></script>
+
+
+<link rel="stylesheet" type="text/css" href="assets/js/treeview/assets/treeview-menu.css" />
+
+<style>
+	body,
+	p 
+	{
+		margin:0;
+		padding:0;
+	}	
+
+	a 
+	{
+		color: #333;
+	}
+	
+	.ygtvitem
+	{
+		border-top: 1px solid #DDD;
+		
+	}
+
+	.log 
+	{
+		color: #848484;
+	}
+	.debug 
+	{
+		color: #999;
+	}	
+	.info 
+	{
+		color: #169AED;
+	}
+		
+	.error 
+	{
+		color: #D134D1;
+	}
+
+	.warn 
+	{
+		color: #FFA927;
+	}
+					
+	#expandcontractdiv 
+	{
+		border:1px dotted #dedede; 
+		background-color:#EBE4F2; 
+		margin:0 0 .5em 0; 
+		padding:0.4em;
+	}
+	#treeDiv1 
+	{ 
+		padding: .2em;
+	}
+</style>
+
+
+</head>
+
+<body>
+<div id="treeDiv">===== log data is cleared =====</div>
+
+<script type="text/javascript"> 
+
+var tree, lastNode;
+
+	function initTree() 
+	{
+		//instantiate the TreeView control:
+		tree = new YAHOO.widget.TreeView("treeDiv");
+
+		lastNode = getRootNode();
+	
+		
+		/*
+		
+		//begin adding children
+		lastNode = new YAHOO.widget.TextNode('<strong class="info">first label</strong>', tree.getRoot(), true);
+		lastNode = new YAHOO.widget.TextNode("second label", tree.getRoot(), true);
+		lastNode = new YAHOO.widget.TextNode("third label", lastNode, true);		
+		//the tree won't show up until you draw (render) it:
+		
+		
+		tree.draw();
+	
+		addTree(lastNode, "hello 22");
+		
+		*/
+	
+		
+		//alert("hello " + getParentParentNode());
+	}
+
+	function addTree(node, label)
+	{	
+		lastNode = new YAHOO.widget.TextNode(label, node, true);
+		
+		var prevNode = lastNode.previousSilbing;
+		if ( prevNode != undefined && !prevNode.hasChildren() ) prevNode.isLeaf(true);
+						
+	}
+
+	function drawTree() 
+	{
+		tree.draw();
+	}
+
+
+	function getParentNode() 
+	{
+		var parent = (lastNode.parent) ? lastNode.parent : getRootNode(); 	
+		return parent;
+	}
+
+	function getParentParentNode() 
+	{
+		var parent = (getParentNode().parent) ? getParentNode().parent : getRootNode(); 	
+		return parent;
+	}
+	
+	function setParentNode()
+	{
+		lastNode = getParentNode(); 		
+	}
+
+	function getLastNodeParent() 
+	{
+		var parent = (lastNode.parent) ? lastNode.parent : getRootNode(); 	
+		return parent;
+	}
+			
+	function getRootNode() 
+	{	
+		return tree.getRoot();
+	}
+	
+	function clearLastRoot()
+	{
+		lastNode = getRootNode();
+	}
+		
+	YAHOO.util.Event.onDOMReady(initTree);
+	
+</script>
+
+
+</body>
+</html>
